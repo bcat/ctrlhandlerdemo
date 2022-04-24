@@ -61,7 +61,7 @@ const char *GetCtrlType(DWORD ctrl_type) {
 
 BOOL WINAPI CtrlHandler(DWORD dwCtrlType) {
   char buf[BUF_SIZE];
-  snprintf(buf, sizeof(buf), "Exiting due to %s", GetCtrlType(dwCtrlType));
+  snprintf(buf, sizeof(buf), "Received %s", GetCtrlType(dwCtrlType));
   Log(buf);
   return FALSE;
 }
