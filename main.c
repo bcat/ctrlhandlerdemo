@@ -4,6 +4,7 @@
 #include "windows.h"
 
 #define BUF_SIZE 256
+#define STOP_DELAY_MS 10000
 
 HANDLE log_file;
 
@@ -94,7 +95,7 @@ int main(int argc, char **argv) {
   }
 
   Log("Simulating cleanup on exit...");
-  Sleep(5000);
+  Sleep(STOP_DELAY_MS);
   Log("Exiting after simulated cleanup");
   return 0;
 }
