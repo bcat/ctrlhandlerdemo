@@ -66,6 +66,8 @@ BOOL WINAPI CtrlHandler(DWORD dwCtrlType) {
 }
 
 int main(int argc, char **argv) {
+  setbuf(stdout, NULL);
+
   log_file = CreateFile("ctrlhandlerdemo.log", GENERIC_WRITE, FILE_SHARE_READ,
                         NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
   if (log_file == INVALID_HANDLE_VALUE) {
