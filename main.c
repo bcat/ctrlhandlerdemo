@@ -13,7 +13,7 @@ void LogInternal(const char *str) {
 
   DWORD num_bytes = strlen(str);
   DWORD num_bytes_written;
-  if (WriteFile(log_file, str, num_bytes, &num_bytes_written, NULL) == 0) {
+  if (!WriteFile(log_file, str, num_bytes, &num_bytes_written, NULL)) {
     fprintf(stderr, "WriteFile failed: %lu", GetLastError());
   } else if (num_bytes_written != num_bytes) {
     fprintf(stderr, "WriteFile only wrote %lu bytes (wanted %lu)",
@@ -63,6 +63,11 @@ BOOL WINAPI CtrlHandler(DWORD dwCtrlType) {
   char buf[BUF_SIZE];
   snprintf(buf, sizeof(buf), "Received %s", GetCtrlType(dwCtrlType));
   Log(buf);
+
+  // Return false to delegate to the default control handler. This normally
+  // calls ExitProcess, but when running as a service the default handler
+  // doesn't exit in response to CLOSE, LOGOFF, or SHUTDOWN:
+  // https://docs.microsoft.com/en-us/windows/console/handlerroutine#remarks.
   return FALSE;
 }
 
@@ -86,8 +91,12 @@ int main(int argc, char **argv) {
     char buf[BUF_SIZE];
     if (fgets(buf, sizeof(buf), stdin) == NULL) {
       Log("Received EOF on stdin");
+
+      // We don't want to exit on EOF, so just sleep forever to avoid burning
+      // CPU on more fgets calls that will immediately return.
       Sleep(INFINITE);
     }
+
     if (strcmp(buf, "stop\n") == 0) {
       Log("Exiting due to \"stop\" command");
       break;

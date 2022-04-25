@@ -1,12 +1,18 @@
 CC = x86_64-w64-mingw32-gcc
 CFLAGS = -Wall -Werror
 
-OBJS = main.o
+bin = ctrlhandlerdemo.exe
+objs = main.o
 
-all: ctrlhandlerdemo
+all: $(bin)
 
-ctrlhandlerdemo: $(OBJS)
-		$(CC) $(CFLAGS) $(OBJS) -o ctrlhandlerdemo.exe
+$(bin): $(objs)
+	$(CC) $(CFLAGS) $(objs) -o $(bin)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
+
+clean:
+	rm -f $(bin) $(objs)
+
+.PHONY: all clean
